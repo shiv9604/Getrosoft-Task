@@ -8,6 +8,7 @@ import {
 } from '../../models/user/user.interface';
 import { Country } from '../../models/countries/country.interface';
 import { HostedUrlConfig } from '../../models/url-config/hosted-config';
+import { environment } from 'src/environments/enviornment.dev';
 
 @Injectable({
   providedIn: 'root',
@@ -29,8 +30,11 @@ export class UserService {
   }
 
   public getCountries(): Observable<Country[]> {
+    let url:string | null = `${environment.baseUrl}/countries.json`;
+    // Toggle url to null for checking server side countried rendeing.
+    url = null;
     return this.http
-      .get(HostedUrlConfig.GET_COUNTRIES)
+      .get(url || HostedUrlConfig.GET_COUNTRIES)
       .pipe(map((res) => res as Country[]));
   }
 }

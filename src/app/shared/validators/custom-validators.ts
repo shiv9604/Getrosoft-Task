@@ -2,16 +2,17 @@ import {
   AbstractControl,
   AsyncValidatorFn,
   ValidationErrors,
+  ValidatorFn,
 } from '@angular/forms';
 import { UserService } from '../services/user/user.service';
 import {
   Observable,
   catchError,
-  debounceTime,
   distinctUntilChanged,
   map,
   of,
   switchMap,
+  timer,
 } from 'rxjs';
 import { ToasterService } from '../services/toaster/toaster.service';
 import { Injectable } from '@angular/core';
@@ -29,18 +30,19 @@ export class CustomValidators {
   public checkUserNameAvailability(): AsyncValidatorFn {
     return (control: AbstractControl): Observable<ValidationErrors | null> => {
       if (!control.value) return of(null);
-      return of(control.value).pipe(
-        debounceTime(300),
+      const debounceTimeInMs = 300;
+      const ctrlValue = control.value;
+      return timer(debounceTimeInMs).pipe(
         distinctUntilChanged(),
-        switchMap((value) => {
-          return this.userService.checkUserName(value).pipe(
+        switchMap(() => {
+          return this.userService.checkUserName(ctrlValue).pipe(
             map((res: UserNameAvailabilityResp) => {
               if (!res.available) return { userNameTaken: true };
               return null;
             }),
             catchError((e) => {
               this.toasterService.showError(
-                e?.message ||
+                e?.error ||
                   'An error occurred while checking user name availability'
               );
               return of(null);
