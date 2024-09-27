@@ -6,21 +6,27 @@ const routes: Routes = [
   {
     path: '',
     redirectTo: 'home',
-    pathMatch : 'full'
+    pathMatch: 'full',
   },
   {
     path: 'home',
-    canActivate : [authGuard],
-    loadComponent: () => import("./features/home/home.component").then((m) => m.HomeComponent)
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./features/home/home.component').then((m) => m.HomeComponent),
   },
   {
     path: 'register',
-    loadComponent: () => import("./features/auth/register/register.component").then((m) => m.RegisterComponent),
-  }
+    loadComponent: () =>
+      import('./features/auth/register/register.component').then(
+        (m) => m.RegisterComponent
+      ),
+  },
 ];
 
 @NgModule({
-  imports: [RouterModule.forRoot(routes,{preloadingStrategy:PreloadAllModules})],
-  exports: [RouterModule]
+  imports: [
+    RouterModule.forRoot(routes, { preloadingStrategy: PreloadAllModules }),
+  ],
+  exports: [RouterModule],
 })
-export class AppRoutingModule { }
+export class AppRoutingModule {}
